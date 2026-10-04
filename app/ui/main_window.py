@@ -8,6 +8,7 @@ from app.ui.login_page import LoginPage
 from app.ui.db_browser_page import DatabaseBrowserPage
 from app.ui.table_browser_page import TableBrowserPage
 from app.ui.table_view_page import TableViewPage
+from app.ui.permissions_dialog import PermissionsDialog
 
 
 class MainWindow(QMainWindow):
@@ -45,6 +46,10 @@ class MainWindow(QMainWindow):
         self.action_new_user.triggered.connect(self.create_new_user)
         account_menu.addAction(self.action_new_user)
 
+        self.action_manage_permissions = QAction("Manage Permissions...", self)
+        self.action_manage_permissions.triggered.connect(self.manage_permissions)
+        account_menu.addAction(self.action_manage_permissions)
+
         self.action_switch_user = QAction("Switch User / Reconnect...", self)
         self.action_switch_user.triggered.connect(self.switch_user)
         account_menu.addAction(self.action_switch_user)
@@ -75,6 +80,7 @@ class MainWindow(QMainWindow):
         is_root = connected and self.connection.is_root()
 
         self.action_new_user.setEnabled(is_root)
+        self.action_manage_permissions.setEnabled(is_root)
         self.action_switch_user.setEnabled(connected)
         self.action_disconnect.setEnabled(connected)
         self.action_switch_db.setEnabled(connected)
@@ -194,3 +200,7 @@ class MainWindow(QMainWindow):
             QMessageBox.information(self, "Success", f"User '{username}'@'{host}' created.")
         except Exception as e:
             QMessageBox.critical(self, "Error", f"Could not create user:\n{e}")
+
+    def manage_permissions(self):
+        dialog = PermissionsDialog(self.connection, self)
+        dialog.exec()

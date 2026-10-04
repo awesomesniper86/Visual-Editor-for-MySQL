@@ -1,4 +1,7 @@
 # Changelog
+## 0.1.1 - 2026-10-04
+- 
+
 ## 0.1.0 - 2026-10-04
 - Windows support: Added PyInstaller support for Windows machines. PowerShell script: `packaging\windows\build_exe.ps1`
 

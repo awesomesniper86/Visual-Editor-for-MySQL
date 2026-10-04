@@ -1,6 +1,6 @@
 # MySQL DB Manager
 
-**Version:** 0.1.0
+**Version:** 0.1.1
 
 A desktop app (PySide6) for browsing and editing MySQL databases visually:
 connect to a server, pick a database, pick a table, see it as an editable
@@ -71,9 +71,15 @@ main.py                  # entry point
    required.
 5. **Raw SQL tab**: type anything and run it, for when you need something
    the guided builder doesn't cover.
-6. **Menu bar**: Account menu has Create New User (only enabled when logged
-   in as root), Switch User/Reconnect, and Disconnect. Navigate menu lets you
-   jump back to pick a different database or table at any time.
+6. **Menu bar**: Account menu has Create New User and Manage Permissions
+   (both only enabled when logged in as root), Switch User/Reconnect, and
+   Disconnect. Navigate menu lets you jump back to pick a different database
+   or table at any time.
+7. **Manage Permissions**: pick a user (existing ones are listed, or type a
+   new one), a database/table scope (or "all"), check the privileges you
+   want, and hit Grant -- builds and runs the `GRANT` plus `FLUSH
+   PRIVILEGES` for you. "Show Current Grants" runs `SHOW GRANTS FOR` so you
+   can see what a user already has before changing anything.
 
 ## Notes / things worth knowing
 

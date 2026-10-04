@@ -41,3 +41,26 @@ def describe_table(connection, table_name):
 def get_primary_key_columns(connection, table_name):
     desc = describe_table(connection, table_name)
     return [d["field"] for d in desc if d["key"] == "PRI"]
+
+
+def list_tables_in(connection, database):
+    """Lists tables in `database` without switching the connection's active
+    database (unlike list_tables, which uses whatever's currently selected)."""
+    _, rows = connection.execute(
+        "SELECT TABLE_NAME FROM information_schema.TABLES WHERE TABLE_SCHEMA = %s ORDER BY TABLE_NAME",
+        [database],
+    )
+    return [r[0] for r in rows]
+
+
+def list_users(connection):
+    """Returns a sorted list of (user, host) tuples from mysql.user. Requires
+    a user with privileges to read that table (root always can)."""
+    _, rows = connection.execute("SELECT User, Host FROM mysql.user ORDER BY User, Host")
+    return [(r[0], r[1]) for r in rows]
+
+
+def get_grants(connection, username, host):
+    """Returns SHOW GRANTS FOR <user>@<host> as a list of strings."""
+    _, rows = connection.execute("SHOW GRANTS FOR %s@%s", [username, host])
+    return [r[0] for r in rows]

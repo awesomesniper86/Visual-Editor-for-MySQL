@@ -19,6 +19,11 @@ _IDENTIFIER_RE = re.compile(r"^[A-Za-z_][A-Za-z0-9_]{0,63}$")
 _NUMERIC_TYPES = {"INT", "BIGINT", "SMALLINT", "TINYINT", "DECIMAL", "FLOAT", "DOUBLE", "BOOLEAN"}
 _KEYWORD_DEFAULTS = {"CURRENT_TIMESTAMP", "NULL", "TRUE", "FALSE"}
 
+VALID_PRIVILEGES = {
+    "ALL PRIVILEGES", "SELECT", "INSERT", "UPDATE", "DELETE", "CREATE", "DROP",
+    "ALTER", "INDEX", "REFERENCES", "EXECUTE", "CREATE VIEW", "SHOW VIEW", "TRIGGER",
+}
+
 
 def validate_identifier(name, kind="identifier"):
     """Raises ValueError if `name` isn't safe to splice into DDL as an
@@ -72,11 +77,37 @@ def build_create_user(username, host, password):
     return sql, [username, host, password]
 
 
-def build_grant(username, host, privileges, database, table="*"):
+def build_grant(username, host, privileges, database="*", table="*"):
+    """database/table may be "*" for "all databases"/"all tables"; anything
+    else is validated as an identifier before being backtick-quoted, since
+    MySQL can't take a placeholder for an identifier the way it can for a
+    value. privileges is checked against a fixed whitelist for the same
+    reason -- it's spliced into the statement text, not passed as a param."""
+    if not privileges:
+        raise ValueError("Select at least one privilege to grant.")
+    for p in privileges:
+        if p not in VALID_PRIVILEGES:
+            raise ValueError(f"'{p}' isn't a recognized privilege.")
     priv_list = ", ".join(privileges)
-    target = "*" if table == "*" else f"`{table}`"
-    sql = f"GRANT {priv_list} ON `{database}`.{target} TO %s@%s"
+
+    if database == "*":
+        db_target = "*"
+    else:
+        validate_identifier(database, "database")
+        db_target = f"`{database}`"
+
+    if table == "*":
+        table_target = "*"
+    else:
+        validate_identifier(table, "table")
+        table_target = f"`{table}`"
+
+    sql = f"GRANT {priv_list} ON {db_target}.{table_target} TO %s@%s"
     return sql, [username, host]
+
+
+def build_flush_privileges():
+    return "FLUSH PRIVILEGES", []
 
 
 def build_create_database(name):
