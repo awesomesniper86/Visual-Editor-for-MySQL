@@ -8,4 +8,4 @@ which updates this file, VERSION, README.md, and CHANGELOG.md together so
 they can't drift out of sync.
 """
 
-__version__ = "0.0.3"
+__version__ = "0.1.0"

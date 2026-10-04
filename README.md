@@ -1,6 +1,6 @@
 # MySQL DB Manager
 
-**Version:** 0.0.3
+**Version:** 0.1.0
 
 A desktop app (PySide6) for browsing and editing MySQL databases visually:
 connect to a server, pick a database, pick a table, see it as an editable
@@ -92,11 +92,15 @@ main.py                  # entry point
 The app is compiled with PyInstaller. Build on each target OS separately --
 PyInstaller doesn't cross-compile.
 
-**Windows `.exe`** (run on a Windows machine):
+**Windows `.exe`** (run on a Windows machine, in PowerShell):
 ```powershell
+.venv\Scripts\Activate.ps1
 pip install pyinstaller
-pyinstaller --onefile --windowed --name MySQLDBManager main.py
+packaging\windows\build_exe.ps1
 ```
+
+The exe lands at `dist\MySQLDBManager-<version>.exe`, with the version taken
+from `VERSION`.
 
 **Ubuntu `.deb`** (run on an Ubuntu machine). A script runs PyInstaller and
 then packages the binary with `dpkg-deb`:
