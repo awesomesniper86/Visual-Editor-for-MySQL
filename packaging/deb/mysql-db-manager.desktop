@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=MySQL DB Manager
+Comment=Browse and edit MySQL databases visually
+Exec=mysql-db-manager
+Terminal=false
+Categories=Development;Database;

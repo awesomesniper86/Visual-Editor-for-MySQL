@@ -1,0 +1,11 @@
+Package: mysql-db-manager
+Version: @VERSION@
+Architecture: @ARCH@
+Maintainer: Matthew <matthewrnorman06@gmail.com>
+Installed-Size: @INSTALLED_SIZE@
+Section: database
+Priority: optional
+Depends: libgl1, libegl1, libdbus-1-3, libfontconfig1, libxkbcommon0, libxkbcommon-x11-0, libxcb-cursor0, libxcb-icccm4, libxcb-image0, libxcb-keysyms1, libxcb-randr0, libxcb-render-util0, libxcb-shape0, libxcb-xinerama0, libxcb-xkb1
+Description: Visual MySQL database browser and editor
+ Connect to a MySQL server, pick a database and table, and edit rows in an
+ editable grid, use a guided command builder, or run raw SQL.

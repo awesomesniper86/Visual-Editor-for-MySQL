@@ -1,11 +1,16 @@
 # MySQL DB Manager
 
-**Version:** 0.0.2
+**Version:** 0.0.3
 
 A desktop app (PySide6) for browsing and editing MySQL databases visually:
 connect to a server, pick a database, pick a table, see it as an editable
 grid, and either edit cells directly, use a guided form-based command
 builder, or drop into raw SQL.
+
+This app is meant to be distributed as a compiled application: a Windows
+`.exe` and an Ubuntu `.deb`, both attached to the GitHub releases. End users
+should not need Python installed. The source code can also be run directly
+(see below) for development and testing.
 
 ## Setup
 
@@ -16,14 +21,14 @@ source .venv/bin/activate        # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-## Run (as raw code, before compiling anything)
+## Run from source (development)
 
 ```bash
 python main.py
 ```
 
-This is the whole point of building it this way first -- test everything
-here, make changes, re-run, until it's solid. Only then move to packaging.
+Running the raw code works fine and is the easiest way to test changes:
+edit, re-run, repeat. The compiled builds below are what get distributed.
 
 ## What's in here
 
@@ -82,21 +87,36 @@ main.py                  # entry point
   values are sent as query parameters -- never string-concatenated -- so
   normal use doesn't risk SQL injection.
 
-## Packaging (after you've tested everything above)
+## Building the compiled apps
 
-Build on each target OS separately -- PyInstaller doesn't cross-compile.
+The app is compiled with PyInstaller. Build on each target OS separately --
+PyInstaller doesn't cross-compile.
 
-**Windows** (run on a Windows machine):
+**Windows `.exe`** (run on a Windows machine):
 ```powershell
 pip install pyinstaller
 pyinstaller --onefile --windowed --name MySQLDBManager main.py
 ```
 
-**Ubuntu** (run on an Ubuntu machine):
+**Ubuntu `.deb`** (run on an Ubuntu machine). A script runs PyInstaller and
+then packages the binary with `dpkg-deb`:
 ```bash
+source .venv/bin/activate
 pip install pyinstaller
-pyinstaller --onefile --windowed --name MySQLDBManager main.py
+packaging/deb/build_deb.sh
 ```
 
-Either way the binary lands in `dist/`. If PyInstaller complains about
-missing Qt plugins, add `--collect-all PySide6` to the command.
+The package lands at `dist/mysql-db-manager_<version>_<arch>.deb`, with the
+version taken from `VERSION`. Install it with:
+```bash
+sudo apt install ./dist/mysql-db-manager_<version>_<arch>.deb
+```
+
+The package's `Depends:` list (in `packaging/deb/control.in`) covers the
+system libraries Qt needs on Ubuntu. If the app fails to start on a clean
+machine, check that list first.
+
+If PyInstaller complains about missing Qt plugins, add `--collect-all PySide6`
+to the PyInstaller command in `packaging/deb/build_deb.sh`.
+
+Compiled builds are uploaded to the GitHub repository's releases.
